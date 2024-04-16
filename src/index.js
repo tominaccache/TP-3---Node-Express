@@ -1,3 +1,6 @@
+import Alumno from "./models/alumno.js"
+import {sumar, restar, multiplicar, dividir} from "./modules/matematica.js"
+
 import express from "express"; // hacer npm i express 
 import cors from "cors";
 
@@ -8,16 +11,15 @@ const port = 3000;
 app.use(cors()); // Middleware de CORS
 app.use(express.json()); // Middleware para parsear y comprender JSON
 
-
-
+//1
 app.get("/ejercicio1", (req, res) => {
     res.status(200).send('¡Ya estoy respondiendo!');
   });
-
+//2
 app.get('/ejercicio2/:nombre', (req, res) => {
     res.status(200).send(`Hola ${req.params.nombre}.`);
 });
-
+//3
 app.get('/ejercicio3/validarfecha/:ano/:mes/:dia', (req, res) => {
     const meses31 = [1,3,5,7,8,10,12];
     const mes = parseInt(req.params.mes,10);
@@ -53,8 +55,114 @@ app.get('/ejercicio3/validarfecha/:ano/:mes/:dia', (req, res) => {
     }
 });
 
+//4
+app.get('/matematica/sumar', (req, res) => { // EndPoint "/"
+    const n1 = parseFloat(req.query.n1);
+    const n2 = parseFloat(req.parqueryams.n2);
+    if (isNaN(n1) || isNaN(n2)) {
+        res.status(400).send('Ambos parámetros deben ser números.');
+        return;
+    }
+    const resultado = n1+n2;
+    res.status(200).send(`El resultado de la suma es: ${resultado}`);
+})
+//5
+app.get('/matematica/restar', (req, res) => { // EndPoint "/"
+    const n1 = parseFloat(req.query.n1);
+    const n2 = parseFloat(req.query.n2);
+    if (isNaN(n1) || isNaN(n2)) {
+        res.status(400).send('Ambos parámetros deben ser números.');
+        return;
+    }
+    const resultado = n1-n2;
+    res.status(200).send(`El resultado de la resta es: ${resultado}`);
+})
+//6
+app.get('/matematica/multiplicar', (req, res) => { // EndPoint "/"
+    const n1 = parseFloat(req.query.n1);
+    const n2 = parseFloat(req.query.n2);
+    if (isNaN(n1) || isNaN(n2)) {
+        res.status(400).send('Ambos parámetros deben ser números.');
+        return;
+    }
+    const resultado = n1*n2;
+    res.status(200).send(`El resultado de la multiplicación es: ${resultado}`);
+})
+
+//7
+app.get('/matematica/dividir', (req, res) => { // EndPoint "/"
+    const n1 = parseFloat(req.query.n1);
+    const n2 = parseFloat(req.query.n2);
+    if (isNaN(n1) || isNaN(n2)) {
+        res.status(400).send('Ambos parámetros deben ser números.');
+        return;
+    }
+    if (n2===0) {
+        res.status(400).send('¡El divisor no puede ser 0!');
+        return;
+    }
+    const resultado = n1/n2;
+    res.status(200).send(`El resultado de la división es: ${resultado}`);
+})
+
+const alumnosArray = [];
+alumnosArray.push(new Alumno("Esteban Dido" , "22888444", 20));
+alumnosArray.push(new Alumno("Matias Queroso", "28946255", 51));
+alumnosArray.push(new Alumno("Elba Calao" , "32623391", 18));
+//11
+app.get('/alumnos', (req, res) => { // EndPoint "/"
+    res.status(200).send(alumnosArray);
+})
+//12 arreglar este problema
+app.get('/alumnos/:dni', (req, res) => { // EndPoint "/"
+    const dni=req.params.dni;
+    const alumnoEncontrado = alumnosArray.find(function(alumno) {
+        return alumno.DNI === dni;
+    });
+
+    if (!alumnoEncontrado) {
+        res.status(404).send('Dni no encontrado.');
+        return;
+    }
+    res.status(200).send(`El dni buscado es: ${alumnoEncontrado.DNI}.`);
+})
+
+//13 no lo toma
+app.post('/alumnos/:username/:dni/:edad', (req, res) => {
+    const username=req.params.username;
+    const dni=req.params.dni;
+    const edad=req.params.edad;
+    if (!username || !dni || !edad) {
+        res.status(400).send('Por favor, proporcione todos los datos necesarios.');
+        return;
+    }
+    const alumnoNuevo = new Alumno(username, dni, edad);
+    alumnosArray.push(alumnoNuevo);
+
+    res.status(201).send('Alumno creado satisfactoriamente.');
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   
+
 
 app.get('/', (req, res) => { // EndPoint "/"
     res.send('Hello World!');
