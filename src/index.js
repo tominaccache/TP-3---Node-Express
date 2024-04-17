@@ -77,6 +77,7 @@ app.get('/matematica/restar', (req, res) => { // EndPoint "/"
     const resultado = n1-n2;
     res.status(200).send(`El resultado de la resta es: ${resultado}`);
 })
+//http://localhost:3000/matematica/restar?n1=5&n2=7
 //6
 app.get('/matematica/multiplicar', (req, res) => { // EndPoint "/"
     const n1 = parseFloat(req.query.n1);
@@ -113,7 +114,7 @@ alumnosArray.push(new Alumno("Elba Calao" , "32623391", 18));
 app.get('/alumnos', (req, res) => { // EndPoint "/"
     res.status(200).send(alumnosArray);
 })
-//12 arreglar este problema
+//12
 app.get('/alumnos/:dni', (req, res) => { // EndPoint "/"
     const dni=req.params.dni;
     const alumnoEncontrado = alumnosArray.find(function(alumno) {
@@ -124,26 +125,48 @@ app.get('/alumnos/:dni', (req, res) => { // EndPoint "/"
         res.status(404).send('Dni no encontrado.');
         return;
     }
-    res.status(200).send(`El dni buscado es: ${alumnoEncontrado.DNI}.`);
+    res.status(200).send(`El dni buscado es: ${alumnoEncontrado.dni}.`);
 })
 
-//13 no lo toma
+//13 Por favor, proporcione todos los datos necesarios. ME APARECE ESTO
+let alumnoNuevo;
 app.post('/alumnos/:username/:dni/:edad', (req, res) => {
     const username=req.params.username;
     const dni=req.params.dni;
     const edad=req.params.edad;
-    if (!username || !dni || !edad) {
+if (edad<=0) {
+    res.status(400).send('Edad erronea');
+        return;
+}
+if (dni.length !== 8) {
+    res.status(400).send('El DNI debe tener 8 caracteres.');
+    return;
+}
+    if (isNaN(username) || isNaN(dni) || isNaN(edad)) {
         res.status(400).send('Por favor, proporcione todos los datos necesarios.');
         return;
     }
-    const alumnoNuevo = new Alumno(username, dni, edad);
+    alumnoNuevo = new Alumno(username, dni, edad);
     alumnosArray.push(alumnoNuevo);
 
     res.status(201).send('Alumno creado satisfactoriamente.');
 });
 
 
-
+//14 Fijarse porque siempre aparece alumno no encontrado
+app.delete('/alumnos/:dni', (req, res) => {
+    const eliminarDni = req.params.dni;
+    const index = alumnosArray.findIndex(alumno => alumno.dni === eliminarDni);
+    if (index === -1) {
+        res.status(404).send('Alumno no encontrado.');
+        return;
+    }
+    else if( alumnosArray.splice(index, 1)){
+        res.status(200).send('Alumno eliminado correctamente.');
+    }
+   
+    
+});
 
 
 
