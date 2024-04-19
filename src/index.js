@@ -118,17 +118,17 @@ alumnosArray.push(new Alumno("Esteban Dido" , "22888444", 20));
 alumnosArray.push(new Alumno("Matias Queroso", "28946255", 51));
 alumnosArray.push(new Alumno("Elba Calao" , "32623391", 18));
 
-//11 Terminado
+//11 TERMINADO
 app.get('/alumnos', (req, res) => { // EndPoint "/"
     res.status(200).send(alumnosArray);
 })
 
-//12
+//12 TERMINADO
 app.get('/alumnos/:dni', (req, res) => { // EndPoint "/"
     const dni = req.params.dni;
-    const iAlum = alumnosArray.findIndex(a => a.DNI == dni);
-    if (iAlum === -1) res.status(404).send('DNI no encontrado.')
-    else res.status(200).send(`El DNI buscado es: ${alumnosArray[iAlum]}.`);
+    const alum = alumnosArray.find(a => a.DNI == dni);
+    if (alum === -1) res.status(404).send('DNI no encontrado.')
+    else res.status(200).send(`El alumno buscado es: ${alum["username"]}, DNI; ${alum["DNI"]}, ${alum["edad"]} años.`);
 })
 
 //13 TERMINADO
