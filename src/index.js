@@ -1,8 +1,8 @@
 import Alumno from "./models/alumno.js"
 import {sumar, restar, multiplicar, dividir} from "./modules/matematica.js"
-
 import express from "express"; // hacer npm i express 
 import cors from "cors";
+import {OMDBSearchByPage, OMDBSearchComplete, OMDBGetByImdbID} from "./modules/omdb-wrapper.js"
 
 const app = express();
 const port = 3000;
@@ -11,15 +11,17 @@ const port = 3000;
 app.use(cors()); // Middleware de CORS
 app.use(express.json()); // Middleware para parsear y comprender JSON
 
-//1
-app.get("/ejercicio1", (req, res) => {
+//1 TERMINADO
+app.get("/", (req, res) => {
     res.status(200).send('¡Ya estoy respondiendo!');
   });
-//2
+
+//2 TERMINADO
 app.get('/ejercicio2/:nombre', (req, res) => {
     res.status(200).send(`Hola ${req.params.nombre}.`);
 });
-//3
+
+//3 TERMINADO
 app.get('/ejercicio3/validarfecha/:ano/:mes/:dia', (req, res) => {
     const meses31 = [1,3,5,7,8,10,12];
     const mes = parseInt(req.params.mes,10);
@@ -55,59 +57,83 @@ app.get('/ejercicio3/validarfecha/:ano/:mes/:dia', (req, res) => {
     }
 });
 
-//4
-app.get('/matematica/sumar', (req, res) => { // EndPoint "/"
+
+/* MATEMATICA */
+
+//4 TERMINADO
+app.get('/matematica/sumar', (req, res) => { 
     const n1 = parseFloat(req.query.n1);
-    const n2 = parseFloat(req.parqueryams.n2);
+    const n2 = parseFloat(req.query.n2);
     if (isNaN(n1) || isNaN(n2)) {
         res.status(400).send('Ambos parámetros deben ser números.');
         return;
     }
-    const resultado = n1+n2;
+    const resultado = sumar(n1,n2);
     res.status(200).send(`El resultado de la suma es: ${resultado}`);
 })
-//5
-app.get('/matematica/restar', (req, res) => { // EndPoint "/"
+
+//5 TERMINADO
+app.get('/matematica/restar', (req, res) => { 
     const n1 = parseFloat(req.query.n1);
     const n2 = parseFloat(req.query.n2);
     if (isNaN(n1) || isNaN(n2)) {
         res.status(400).send('Ambos parámetros deben ser números.');
         return;
     }
-    const resultado = n1-n2;
+    const resultado = restar(n1,n2);
     res.status(200).send(`El resultado de la resta es: ${resultado}`);
 })
-//http://localhost:3000/matematica/restar?n1=5&n2=7
-//6
-app.get('/matematica/multiplicar', (req, res) => { // EndPoint "/"
+
+//6 TERMINADO
+app.get('/matematica/multiplicar', (req, res) => { 
     const n1 = parseFloat(req.query.n1);
     const n2 = parseFloat(req.query.n2);
     if (isNaN(n1) || isNaN(n2)) {
         res.status(400).send('Ambos parámetros deben ser números.');
         return;
     }
-    const resultado = n1*n2;
+    const resultado = multiplicar(n1,n2);
     res.status(200).send(`El resultado de la multiplicación es: ${resultado}`);
 })
 
-//7
-app.get('/matematica/dividir', (req, res) => { // EndPoint "/"
+//7 TERMINADO
+app.get('/matematica/dividir', (req, res) => { 
     const n1 = parseFloat(req.query.n1);
     const n2 = parseFloat(req.query.n2);
     if (isNaN(n1) || isNaN(n2)) {
         res.status(400).send('Ambos parámetros deben ser números.');
         return;
     }
-    if (n2===0) {
+    if (n2 == 0) {
         res.status(400).send('¡El divisor no puede ser 0!');
         return;
     }
-    const resultado = n1/n2;
+    const resultado = dividir(n1,n2);
     res.status(200).send(`El resultado de la división es: ${resultado}`);
 })
 
 
+/* OMDB */
 
+const APIKEY = "ef1edd31";
+//8  TERMINADO
+app.get('/omdb/searchbypage', async (req, res) => { 
+    const search = req.query.search;
+    const p = req.query.p;
+    res.status(200).send(await OMDBSearchByPage(search, p));
+})
+
+//9 TERMINADO
+app.get('/omdb/searchcomplete', async (req, res) => { 
+    const search = req.query.search;
+    res.status(200).send(await OMDBSearchComplete(search));
+})
+
+//10
+app.get('/omdb/getbyomdbid', async (req, res) => { 
+    const imdbID = req.query.imdbID;
+    res.status(200).send(await OMDBGetByImdbID(imdbID));
+})
 
 
 
@@ -119,12 +145,12 @@ alumnosArray.push(new Alumno("Matias Queroso", "28946255", 51));
 alumnosArray.push(new Alumno("Elba Calao" , "32623391", 18));
 
 //11 TERMINADO
-app.get('/alumnos', (req, res) => { // EndPoint "/"
+app.get('/alumnos', (req, res) => { 
     res.status(200).send(alumnosArray);
 })
 
 //12 TERMINADO
-app.get('/alumnos/:dni', (req, res) => { // EndPoint "/"
+app.get('/alumnos/:dni', (req, res) => { 
     const dni = req.params.dni;
     const alum = alumnosArray.find(a => a.DNI == dni);
     if (alum === -1) res.status(404).send('DNI no encontrado.')
@@ -176,62 +202,6 @@ app.delete('/alumnos/:dni', (req, res) => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-app.get('/', (req, res) => { // EndPoint "/"
-    res.send('Hello World!');
-})
-
-
-
-app.get('/Comidillas', (req, res) => { // EndPoint "/"
-    const send = [[{
-        nombre: "Hellmans'",
-        cantidad: 3,
-        esKasher: true,
-        tipo: "mayonesa"
-    },
-    {
-        nombre: "Hellmans'",
-        cantidad: 4,
-        esKasher: true,
-        tipo: "ketchup"
-    },
-    {
-        nombre: "Hellmans'",
-        cantidad: 2,
-        esKasher: false,
-        tipo: "barbacoa"
-    }],[
-    {
-        estacion: "verano",
-        comidaFav: "helado",
-        color: ["amarillo", "verde agua"]
-    },
-    {
-        estacion: "otoño",
-        comidaFav: "polenta",
-        color: ["azul", "naranja"]
-    }
-    ]];
-    res.send(send);
-})
-
-   
 
 app.listen(port, () => { // Inicio el servidor WEB (escuchar)
  console.log(`Listening on http://localhost:${port}`)
