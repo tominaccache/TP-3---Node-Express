@@ -3,7 +3,7 @@ import {OMDBSearchByPage, OMDBSearchComplete, OMDBGetByImdbID} from "./modules/o
 import ValidacionesHelper from './modules/validaciones-helper.js'
 import Alumno from "./models/alumno.js"
 import express, { response } from "express"; 
-import { validarFecha, leapYear, miEdad } from "./modules/mis-fechas.js";
+import { validarFecha, leapYear } from "./modules/mis-fechas.js";
 import cors from "cors";
 
 const app = express();
@@ -221,9 +221,7 @@ app.get('/fechas/isDate', (req, res) => {
 app.get('/fechas/getEdadActual', (req, res) => {
     const fecha = req.query.fechaNacimiento;
     let miFecha = fecha.split("-");
-    let edadFinal = {
-        edad: 0
-    }
+    let miEdad = 0;
     miFecha.forEach(estaFecha => {
         if(ValidacionesHelper.getStringOrDefault(estaFecha,"-1") == "-1") return res.status(400).send("Todos los valores tienen que ser validos");
     });
@@ -233,10 +231,19 @@ app.get('/fechas/getEdadActual', (req, res) => {
             miFecha[0] = (("0") + miFecha[0]);
         }
 
-        edadFinal.edad = miEdad(miFecha);
+        const miCumple = new Date(`${miFecha[0]}-${miFecha[1]}-${miFecha[2]}`);
+        const hoy = new Date();
+        let dias = Math.floor((hoy.getTime() - miCumple.getTime())/1000/60/60/24);
+        for (let i = miCumple.getFullYear(); i <= hoy.getFullYear(); i++){
+            let daysYear = leapYear(i) ? 366 : 365;
+            if (dias >= daysYear){
+            dias -= daysYear;
+            miEdad++;
+            }
+        }
     }
 
-    return res.status(200).send(`{ edad : ${edadFinal["edad"]} }`);
+    return res.status(200).send(`Felicidades! Tenes ${miEdad} años :)`);
 })
 
 //3
