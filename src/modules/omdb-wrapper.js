@@ -24,11 +24,11 @@ const OMDBSearchByPage = async (searchText, page = 1) => {
 };
 
 const OMDBSearchComplete = async (searchText) => {
-let returnObject = {
-    respuesta : false,
-    cantidadTotal : 0,
-    datos : {}
-    };
+    let returnObject = {
+        respuesta : false,
+        cantidadTotal : 0,
+        datos : {}
+        };
         
     const requestString = `http://www.omdbapi.com/?apikey=${APIKEY}&s=${searchText}`;
     try {
@@ -45,11 +45,11 @@ let returnObject = {
 };
 
 const OMDBGetByImdbID = async (imdbID) => {
-let returnObject = {
-        respuesta : false,
-        cantidadTotal : 0,
-        datos : {}
-    };
+    let returnObject = {
+            respuesta : false,
+            cantidadTotal : 0,
+            datos : {}
+        };
     
     const requestString = `http://www.omdbapi.com/?apikey=${APIKEY}&i=${imdbID}`;
     try {
@@ -57,7 +57,7 @@ let returnObject = {
         if (response.data.Response === "True") {
             returnObject.respuesta = true;
             returnObject.cantidadTotal = 1;
-            returnObject.datos = response.data.Search;
+            returnObject.datos = response.data;
             return returnObject;
         }
     } catch (error) {

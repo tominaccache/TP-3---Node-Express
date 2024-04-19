@@ -1,8 +1,9 @@
-import Alumno from "./models/alumno.js"
 import {sumar, restar, multiplicar, dividir} from "./modules/matematica.js"
-import express from "express"; // hacer npm i express 
-import cors from "cors";
 import {OMDBSearchByPage, OMDBSearchComplete, OMDBGetByImdbID} from "./modules/omdb-wrapper.js"
+import ValidacionesHelper from './modules/validaciones-helper.js'
+import Alumno from "./models/alumno.js"
+import express, { response } from "express"; 
+import cors from "cors";
 
 const app = express();
 const port = 3000;
@@ -129,7 +130,7 @@ app.get('/omdb/searchcomplete', async (req, res) => {
     res.status(200).send(await OMDBSearchComplete(search));
 })
 
-//10
+//10 TERMINADO
 app.get('/omdb/getbyomdbid', async (req, res) => { 
     const imdbID = req.query.imdbID;
     res.status(200).send(await OMDBGetByImdbID(imdbID));
@@ -201,7 +202,42 @@ app.delete('/alumnos/:dni', (req, res) => {
 
 
 
+/* MAS VALIDACIONES */
 
+app.get('/ejercicio3/validarfecha/:ano/:mes/:dia', (req, res) => {
+    const meses31 = [1,3,5,7,8,10,12];
+    const mes = parseInt(req.params.mes,10);
+    const year = parseInt(req.params.ano,10);
+    const myDate = new Date(`${req.params.ano}-${req.params.mes}-${req.params.dia}`);
+
+    if(isNaN(myDate)){
+        res.status(400).send(`Elija una fecha valida.`);
+    }else{
+        let loEncontre = false;
+        for (let i = 0; i < meses31.length; i++) {
+            if(mes == meses31[i]){
+                loEncontre = true;
+            }
+        }
+        if(loEncontre == true){
+            res.status(200).send(`Perfecto!`);
+        }
+        else if(loEncontre == false && req.params.dia < 31 && mes != 2){
+            res.status(200).send(`Perfecto!`);
+        }else{
+            let leapYear = (year % 100 === 0) ? (year % 400 === 0) : (year % 4 === 0);
+            if(leapYear == true && req.params.dia <= 29){
+                res.status(200).send(`Perfecto!`);
+            }
+            else if(leapYear == false && req.params.dia < 29){
+                res.status(200).send(`Perfecto!`);
+            }
+            else{
+                res.status(400).send(`Elija una fecha valida.`);
+            }
+        }
+    }
+});
 
 app.listen(port, () => { // Inicio el servidor WEB (escuchar)
  console.log(`Listening on http://localhost:${port}`)
