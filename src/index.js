@@ -18,12 +18,12 @@ app.get("/", (req, res) => {
   });
 
 //2 TERMINADO
-app.get('/ejercicio2/:nombre', (req, res) => {
+app.get('/saludar/:nombre', (req, res) => {
     res.status(200).send(`Hola ${req.params.nombre}.`);
 });
 
 //3 TERMINADO
-app.get('/ejercicio3/validarfecha/:ano/:mes/:dia', (req, res) => {
+app.get('/validarfecha/:ano/:mes/:dia', (req, res) => {
     const meses31 = [1,3,5,7,8,10,12];
     const mes = parseInt(req.params.mes,10);
     const year = parseInt(req.params.ano,10);
@@ -202,13 +202,22 @@ app.delete('/alumnos/:dni', (req, res) => {
 
 
 
-/* MAS VALIDACIONES */
+/* MAS VALIDACIONES - PARTE 2 */
 
-app.get('/ejercicio3/validarfecha/:ano/:mes/:dia', (req, res) => {
+//1 TERMINADO
+app.get('/fechas/isDate', (req, res) => {
+    const fecha = req.query.fecha;
+    let miFecha = fecha.split("-");
+
+    miFecha.forEach(estaFecha => {
+        if(ValidacionesHelper.getStringOrDefault(estaFecha,"-1") == "-1") return res.status(400).send("Todos los valores tienen que ser validos");
+    });
+
     const meses31 = [1,3,5,7,8,10,12];
-    const mes = parseInt(req.params.mes,10);
-    const year = parseInt(req.params.ano,10);
-    const myDate = new Date(`${req.params.ano}-${req.params.mes}-${req.params.dia}`);
+    const dia = (ValidacionesHelper.getIntegerOrDefault(miFecha[2]),-1) ? miFecha[2] : -1;
+    const mes = (ValidacionesHelper.getIntegerOrDefault(miFecha[2]),-1) ? miFecha[1] : -1;
+    const year = (ValidacionesHelper.getIntegerOrDefault(miFecha[2]),-1) ? miFecha[0] : -1;
+    const myDate = (dia != -1 && mes != -1 && year != -1) ? new Date(fecha) : NaN;
 
     if(isNaN(myDate)){
         res.status(400).send(`Elija una fecha valida.`);
@@ -220,24 +229,50 @@ app.get('/ejercicio3/validarfecha/:ano/:mes/:dia', (req, res) => {
             }
         }
         if(loEncontre == true){
-            res.status(200).send(`Perfecto!`);
+            res.status(200).send(`Perfecto! Tu fecha es valida :)`);
         }
-        else if(loEncontre == false && req.params.dia < 31 && mes != 2){
-            res.status(200).send(`Perfecto!`);
+        else if(loEncontre == false && dia < 31 && mes != 2){
+            res.status(200).send(`Perfecto! Tu fecha es valida :)`);
         }else{
             let leapYear = (year % 100 === 0) ? (year % 400 === 0) : (year % 4 === 0);
-            if(leapYear == true && req.params.dia <= 29){
-                res.status(200).send(`Perfecto!`);
+            if(leapYear == true && dia <= 29){
+                res.status(200).send(`Perfecto! Tu fecha es valida :)`);
             }
-            else if(leapYear == false && req.params.dia < 29){
-                res.status(200).send(`Perfecto!`);
+            else if(leapYear == false && dia < 29){
+                res.status(200).send(`Perfecto! Tu fecha es valida :)`);
             }
             else{
                 res.status(400).send(`Elija una fecha valida.`);
             }
         }
     }
-});
+})
+
+//2
+app.get('/fechas/getEdadActual', (req, res) => {
+
+})
+
+//3
+app.get('/fechas/getEdadActual', (req, res) => {
+
+})
+
+//4
+app.get('/fechas/getEdadActual', (req, res) => {
+
+})
+
+
+app.get('/fechas/getEdadActual', (req, res) => {
+
+})
+
+
+
+
+
+
 
 app.listen(port, () => { // Inicio el servidor WEB (escuchar)
  console.log(`Listening on http://localhost:${port}`)
