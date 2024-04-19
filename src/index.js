@@ -242,7 +242,7 @@ app.get('/fechas/getEdadActual', (req, res) => {
             }
         }
     }
-    return res.status(200).send(`Tenes ${miEdad} años!`);
+    return res.status(200).send(`Tenes ${miEdad} años! || {"edad" : ${miEdad}}`);
 })
 
 //3
