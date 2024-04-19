@@ -3,6 +3,7 @@ import {OMDBSearchByPage, OMDBSearchComplete, OMDBGetByImdbID} from "./modules/o
 import ValidacionesHelper from './modules/validaciones-helper.js'
 import Alumno from "./models/alumno.js"
 import express, { response } from "express"; 
+import { validarFecha, leapYear } from "./modules/mis-fechas.js";
 import cors from "cors";
 
 const app = express();
@@ -213,58 +214,49 @@ app.get('/fechas/isDate', (req, res) => {
         if(ValidacionesHelper.getStringOrDefault(estaFecha,"-1") == "-1") return res.status(400).send("Todos los valores tienen que ser validos");
     });
 
-    const meses31 = [1,3,5,7,8,10,12];
-    const dia = (ValidacionesHelper.getIntegerOrDefault(miFecha[2]),-1) ? miFecha[2] : -1;
-    const mes = (ValidacionesHelper.getIntegerOrDefault(miFecha[2]),-1) ? miFecha[1] : -1;
-    const year = (ValidacionesHelper.getIntegerOrDefault(miFecha[2]),-1) ? miFecha[0] : -1;
-    const myDate = (dia != -1 && mes != -1 && year != -1) ? new Date(fecha) : NaN;
-
-    if(isNaN(myDate)){
-        res.status(400).send(`Elija una fecha valida.`);
-    }else{
-        let loEncontre = false;
-        for (let i = 0; i < meses31.length; i++) {
-            if(mes == meses31[i]){
-                loEncontre = true;
-            }
-        }
-        if(loEncontre == true){
-            res.status(200).send(`Perfecto! Tu fecha es valida :)`);
-        }
-        else if(loEncontre == false && dia < 31 && mes != 2){
-            res.status(200).send(`Perfecto! Tu fecha es valida :)`);
-        }else{
-            let leapYear = (year % 100 === 0) ? (year % 400 === 0) : (year % 4 === 0);
-            if(leapYear == true && dia <= 29){
-                res.status(200).send(`Perfecto! Tu fecha es valida :)`);
-            }
-            else if(leapYear == false && dia < 29){
-                res.status(200).send(`Perfecto! Tu fecha es valida :)`);
-            }
-            else{
-                res.status(400).send(`Elija una fecha valida.`);
-            }
-        }
-    }
+    return (validarFecha(miFecha) == true) ? res.status(200).send(`Perfecto! Tu fecha es valida :)`) : res.status(400).send(`Elija una fecha valida.`);
 })
 
 //2
 app.get('/fechas/getEdadActual', (req, res) => {
+    const fecha = req.query.fechaNacimiento;
+    let miFecha = fecha.split("-");
+    let miEdad = 0;
+    miFecha.forEach(estaFecha => {
+        if(ValidacionesHelper.getStringOrDefault(estaFecha,"-1") == "-1") return res.status(400).send("Todos los valores tienen que ser validos");
+    });
 
+    if (validarFecha(miFecha)) {
+        for (let i = 1; miFecha[0].length < 4; i++) {
+            miFecha[0] = (("0") + miFecha[0]);
+        }
+
+        const miCumple = new Date(`${miFecha[0]}-${miFecha[1]}-${miFecha[2]}`);
+        const hoy = new Date();
+        let dias = Math.floor((hoy.getTime() - miCumple.getTime())/1000/60/60/24);
+        for (let i = miCumple.getFullYear(); i <= hoy.getFullYear(); i++){
+            let daysYear = leapYear(i) ? 366 : 365;
+            if (dias >= daysYear){
+            dias -= daysYear;
+            miEdad++;
+            }
+        }
+    }
+    return res.status(200).send(`Tenes ${miEdad} años!`);
 })
 
 //3
-app.get('/fechas/getEdadActual', (req, res) => {
+app.get('/fechas/getDiasHastaMiCumple', (req, res) => {
 
 })
 
 //4
-app.get('/fechas/getEdadActual', (req, res) => {
+app.get('/fechas/getDiaTexto', (req, res) => {
 
 })
 
-
-app.get('/fechas/getEdadActual', (req, res) => {
+//5
+app.get('/fechas/getMesTexto', (req, res) => {
 
 })
 
