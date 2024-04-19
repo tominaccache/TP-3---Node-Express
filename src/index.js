@@ -222,6 +222,9 @@ app.get('/fechas/getEdadActual', (req, res) => {
     const fecha = req.query.fechaNacimiento;
     let miFecha = fecha.split("-");
     let miEdad = 0;
+    let edadFinal = {
+        edad: 0
+    }
     miFecha.forEach(estaFecha => {
         if(ValidacionesHelper.getStringOrDefault(estaFecha,"-1") == "-1") return res.status(400).send("Todos los valores tienen que ser validos");
     });
@@ -242,12 +245,24 @@ app.get('/fechas/getEdadActual', (req, res) => {
             }
         }
     }
-    return res.status(200).send(`Tenes ${miEdad} años! || {"edad" : ${miEdad}}`);
+
+    edadFinal.edad = miEdad;
+
+    return res.status(200).send(`${edadFinal}`);
 })
 
 //3
 app.get('/fechas/getDiasHastaMiCumple', (req, res) => {
     const fecha = req.query.fechaNacimiento;
+
+    let miFecha = fecha.split("-");
+    let miEdad = 0;
+    miFecha.forEach(estaFecha => {
+        if(ValidacionesHelper.getStringOrDefault(estaFecha,"-1") == "-1") return res.status(400).send("Todos los valores tienen que ser validos");
+    });
+
+    if (validarFecha(miFecha)) {}
+    return res.status(200).send(`Quedan AGREGAR VARIABLE para tu cumple!`);
 })
 
 //4
