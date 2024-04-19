@@ -249,9 +249,7 @@ app.get('/fechas/getEdadActual', (req, res) => {
 //3
 app.get('/fechas/getDiasHastaMiCumple', (req, res) => {
     const fecha = req.query.fechaNacimiento;
-
     let miFecha = fecha.split("-");
-    let miEdad = 0;
     miFecha.forEach(estaFecha => {
         if(ValidacionesHelper.getStringOrDefault(estaFecha,"-1") == "-1") return res.status(400).send("Todos los valores tienen que ser validos");
     });
