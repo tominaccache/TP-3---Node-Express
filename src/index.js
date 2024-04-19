@@ -106,66 +106,71 @@ app.get('/matematica/dividir', (req, res) => { // EndPoint "/"
     res.status(200).send(`El resultado de la división es: ${resultado}`);
 })
 
-const alumnosArray = [];
+
+
+
+
+
+/* ALUMNO */
+
+let alumnosArray = [];
 alumnosArray.push(new Alumno("Esteban Dido" , "22888444", 20));
 alumnosArray.push(new Alumno("Matias Queroso", "28946255", 51));
 alumnosArray.push(new Alumno("Elba Calao" , "32623391", 18));
-//11
+
+//11 Terminado
 app.get('/alumnos', (req, res) => { // EndPoint "/"
     res.status(200).send(alumnosArray);
 })
+
 //12
 app.get('/alumnos/:dni', (req, res) => { // EndPoint "/"
-    const dni=req.params.dni;
-    const alumnoEncontrado = alumnosArray.find(function(alumno) {
-        return alumno.DNI === dni;
-    });
-
-    if (!alumnoEncontrado) {
-        res.status(404).send('Dni no encontrado.');
-        return;
-    }
-    res.status(200).send(`El dni buscado es: ${alumnoEncontrado.dni}.`);
+    const dni = req.params.dni;
+    const iAlum = alumnosArray.findIndex(a => a.DNI == dni);
+    if (iAlum === -1) res.status(404).send('DNI no encontrado.')
+    else res.status(200).send(`El DNI buscado es: ${alumnosArray[iAlum]}.`);
 })
 
-//13 Por favor, proporcione todos los datos necesarios. ME APARECE ESTO
-let alumnoNuevo;
+//13 TERMINADO
 app.post('/alumnos/:username/:dni/:edad', (req, res) => {
-    const username=req.params.username;
-    const dni=req.params.dni;
-    const edad=req.params.edad;
-if (edad<=0) {
-    res.status(400).send('Edad erronea');
+    const username = req.params.username;
+    const dni = req.params.dni;
+    const edad = req.params.edad;
+
+    if (edad < 0 || edad > 150) {
+        res.status(400).send('Edad inexistente');
         return;
-}
-if (dni.length !== 8) {
-    res.status(400).send('El DNI debe tener 8 caracteres.');
-    return;
-}
-    if (isNaN(username) || isNaN(dni) || isNaN(edad)) {
+    }
+    else if (dni.length > 8) {
+        res.status(400).send('El DNI debe tener hasta 8 caracteres.');
+        return;
+    }
+    else if(username === null || dni === null || edad === null) {
         res.status(400).send('Por favor, proporcione todos los datos necesarios.');
         return;
     }
-    alumnoNuevo = new Alumno(username, dni, edad);
-    alumnosArray.push(alumnoNuevo);
 
-    res.status(201).send('Alumno creado satisfactoriamente.');
+    let encontrado = false;
+    alumnosArray.forEach(a => { if (a.DNI == dni) encontrado = true });
+        
+    if(!encontrado){
+        const alumnoNuevo = new Alumno(username, dni, edad);
+        alumnosArray.push(alumnoNuevo);
+        res.status(201).send('Alumno creado satisfactoriamente.');
+    }
+    else res.status(400).send('El alumno ya se encuentra en la base de datos.');
 });
 
 
-//14 Fijarse porque siempre aparece alumno no encontrado
+//14 TERMINADO 
 app.delete('/alumnos/:dni', (req, res) => {
     const eliminarDni = req.params.dni;
-    const index = alumnosArray.findIndex(alumno => alumno.dni === eliminarDni);
-    if (index === -1) {
-        res.status(404).send('Alumno no encontrado.');
-        return;
-    }
-    else if( alumnosArray.splice(index, 1)){
+    const index = alumnosArray.findIndex(alumno => alumno.DNI == eliminarDni);
+    if (index === -1) res.status(404).send('Alumno no encontrado.');
+    else {
+        alumnosArray.splice(index, 1);
         res.status(200).send('Alumno eliminado correctamente.');
     }
-   
-    
 });
 
 
