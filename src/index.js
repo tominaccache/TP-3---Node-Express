@@ -247,17 +247,19 @@ app.get('/fechas/getEdadActual', (req, res) => {
 
 //3
 app.get('/fechas/getDiasHastaMiCumple', (req, res) => {
-
+    const fecha = req.query.fechaNacimiento;
 })
 
 //4
 app.get('/fechas/getDiaTexto', (req, res) => {
-
+    const fecha = req.query.fechaNacimiento;
+    const abr = req.query.fechaNacimiento;
 })
 
 //5
 app.get('/fechas/getMesTexto', (req, res) => {
-
+    const fecha = req.query.fechaNacimiento;
+    const abr = req.query.fechaNacimiento;
 })
 
 
