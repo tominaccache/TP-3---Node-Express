@@ -1,9 +1,8 @@
 import {sumar, restar, multiplicar, dividir} from "./modules/matematica.js"
 import {OMDBSearchByPage, OMDBSearchComplete, OMDBGetByImdbID} from "./modules/omdb-wrapper.js"
-import ValidacionesHelper from './modules/validaciones-helper.js'
 import Alumno from "./models/alumno.js"
 import express, { response } from "express"; 
-import { validarFecha, leapYear } from "./modules/mis-fechas.js";
+import DateTimeHelper from "./modules/DateTimeHelper.js";
 import cors from "cors";
 
 const app = express();
@@ -208,46 +207,20 @@ app.delete('/alumnos/:dni', (req, res) => {
 //1 TERMINADO
 app.get('/fechas/isDate', (req, res) => {
     const fecha = req.query.fecha;
-    let miFecha = fecha.split("-");
 
-    miFecha.forEach(estaFecha => {
-        if(ValidacionesHelper.getStringOrDefault(estaFecha,"-1") == "-1") return res.status(400).send("Todos los valores tienen que ser validos");
-    });
-
-    return (validarFecha(miFecha) == true) ? res.status(200).send(`Perfecto! Tu fecha es valida :)`) : res.status(400).send(`Elija una fecha valida.`);
+    return (DateTimeHelper.isDate(fecha) == true) ? res.status(200).send(`Perfecto! Tu fecha es valida :)`) : res.status(400).send(`Elija una fecha valida.`);
 })
 
 //2
 app.get('/fechas/getEdadActual', (req, res) => {
     const fecha = req.query.fechaNacimiento;
-    let miFecha = fecha.split("-");
-    let miEdad = 0;
-    miFecha.forEach(estaFecha => {
-        if(ValidacionesHelper.getStringOrDefault(estaFecha,"-1") == "-1") return res.status(400).send("Todos los valores tienen que ser validos");
-    });
-
-    if (validarFecha(miFecha)) {
-        for (let i = 1; miFecha[0].length < 4; i++) {
-            miFecha[0] = (("0") + miFecha[0]);
-        }
-
-        const miCumple = new Date(`${miFecha[0]}-${miFecha[1]}-${miFecha[2]}`);
-        const hoy = new Date();
-        let dias = Math.floor((hoy.getTime() - miCumple.getTime())/1000/60/60/24);
-        for (let i = miCumple.getFullYear(); i <= hoy.getFullYear(); i++){
-            let daysYear = leapYear(i) ? 366 : 365;
-            if (dias >= daysYear){
-            dias -= daysYear;
-            miEdad++;
-            }
-        }
-    }
-
+    let miEdad = DateTimeHelper.getEdadActual(fecha);
+    if(miEdad == false) return res.status(400).send("Todos los valores tienen que ser validos");
     return res.status(200).send(`Felicidades! Tenes ${miEdad} años :)`);
 })
 
 //3
-app.get('/fechas/getDiasHastaMiCumple', (req, res) => {
+app.get('/fechas/getDiasHastaMiCumple', (req, res) => {/*
     const fecha = req.query.fechaNacimiento;
     let miFecha = fecha.split("-");
     miFecha.forEach(estaFecha => {
@@ -255,7 +228,7 @@ app.get('/fechas/getDiasHastaMiCumple', (req, res) => {
     });
 
     if (validarFecha(miFecha)) {}
-    return res.status(200).send(`Quedan AGREGAR VARIABLE para tu cumple!`);
+    return res.status(200).send(`Quedan AGREGAR VARIABLE para tu cumple!`);*/
 })
 
 //4
