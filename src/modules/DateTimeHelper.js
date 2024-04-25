@@ -66,7 +66,19 @@ class DateTimeHelper {
     };
 
     getDiaTexto = (fecha, retornarAbreviacion = false) => { 
+        let dias = [ "Domingo", "Lunes", "Martes", "Miercoles", "Jueves",
+                "Viernes", "Sabado"];
+        let res = {
+            dia : ""
+        }
 
+        if(this.getOnlyDate(fecha) == false) return false;
+        let miFecha = fecha.split("-");
+        if (this.validarUnaFecha(miFecha)) {
+            const laFecha = new Date(fecha);
+            res['dia'] = (retornarAbreviacion == true || retornarAbreviacion.toLowerCase() == "true") ? dias[laFecha.getDay()].substring(0,3) : dias[laFecha.getDay()]; 
+        }
+        return res;
     };
 
     getMesTexto = (fecha, retornarAbreviacion = false) => { 
@@ -74,18 +86,15 @@ class DateTimeHelper {
                 "Mayo", "Junio", "Julio", "Agosto", "Septiembre", 
                 "Octubre", "Noviembre", "Diciembre" ];
         let res = {
-            "mes" : ""
+            mes : ""
         }
 
         if(this.getOnlyDate(fecha) == false) return false;
         let miFecha = fecha.split("-");
         if (this.validarUnaFecha(miFecha)) {
-            const miFecha = new Date(fecha);
-            if (retornarAbreviacion === false) res["mes"] = meses[miFecha.getFullYear + 1];
-            if (retornarAbreviacion === true) res["mes"] = meses[miFecha.getFullYear + 1].substring(0,4);
-            return res;
+            res['mes'] = (retornarAbreviacion == true || retornarAbreviacion.toLowerCase() == "true") ? meses[miFecha[1] - 1].substring(0,3) : meses[miFecha[1] - 1];
         }
-        
+        return res;
     };
 
     validarUnaFecha = (miFecha) => {

@@ -235,6 +235,10 @@ app.get('/fechas/getDiasHastaMiCumple', (req, res) => {
 app.get('/fechas/getDiaTexto', (req, res) => {
     const fecha = req.query.fecha;
     const abr = req.query.abr;
+
+    let miDia = DateTimeHelper.getDiaTexto(fecha, abr);
+    if(miDia === false) return res.status(400).send("Todos los valores tienen que ser validos!");
+    return res.status(200).send(`${JSON.stringify(miDia)}`);
 })
 
 //5
@@ -242,11 +246,10 @@ app.get('/fechas/getMesTexto', (req, res) => {
     const fecha = req.query.fecha;
     const abr = req.query.abr;
 
-    
+    let miMes = DateTimeHelper.getMesTexto(fecha, abr);
+    if(miMes === false) return res.status(400).send("Todos los valores tienen que ser validos!");
+    return res.status(200).send(`${JSON.stringify(miMes)}`);
 })
-
-
-
 
 
 
