@@ -208,39 +208,41 @@ app.delete('/alumnos/:dni', (req, res) => {
 app.get('/fechas/isDate', (req, res) => {
     const fecha = req.query.fecha;
 
-    return (DateTimeHelper.isDate(fecha) == true) ? res.status(200).send(`Perfecto! Tu fecha es valida :)`) : res.status(400).send(`Elija una fecha valida.`);
+    return (DateTimeHelper.isDate(fecha) === true) ? res.status(200).send(`Perfecto! Tu fecha es valida :)`) : res.status(400).send(`Elija una fecha valida.`);
 })
 
 //2
 app.get('/fechas/getEdadActual', (req, res) => {
     const fecha = req.query.fechaNacimiento;
     let miEdad = DateTimeHelper.getEdadActual(fecha);
-    if(miEdad == false) return res.status(400).send("Todos los valores tienen que ser validos");
-    return res.status(200).send(`Felicidades! Tenes ${miEdad} años :)`);
+    if(miEdad === false) return res.status(400).send("Todos los valores tienen que ser validos!");
+    if(miEdad != 0) return res.status(200).send(`Felicidades! Tenes ${miEdad} años :)`);
+    return res.status(200).send(`No decido si todavía no naciste, o todavía no cumplist el año. Either way, tenes cero años :$`);
 })
 
 //3
-app.get('/fechas/getDiasHastaMiCumple', (req, res) => {/*
+app.get('/fechas/getDiasHastaMiCumple', (req, res) => {
     const fecha = req.query.fechaNacimiento;
-    let miFecha = fecha.split("-");
-    miFecha.forEach(estaFecha => {
-        if(ValidacionesHelper.getStringOrDefault(estaFecha,"-1") == "-1") return res.status(400).send("Todos los valores tienen que ser validos");
-    });
-
-    if (validarFecha(miFecha)) {}
-    return res.status(200).send(`Quedan AGREGAR VARIABLE para tu cumple!`);*/
+    let diasHastaMiCumple = DateTimeHelper.getDiasHastaMiCumple(fecha);
+    if(diasHastaMiCumple === false) return res.status(400).send("Todos los valores tienen que ser validos!");
+    if(diasHastaMiCumple == 0) return res.status(200).send(`AAAAAAAH! Mañana es tu cumple! Solo falta un día :)))`);
+    if(diasHastaMiCumple == 364) return res.status(200).send(`Que te haces!!!! Hoy es tu cumple, felicidades :)`);
+    if(diasHastaMiCumple == 1) return res.status(200).send(`Quedan 2 días hasta tu cumple! Ya llega :)`);
+    return res.status(200).send(`Quedan ${diasHastaMiCumple + 1} días hasta tu cumple!`);
 })
 
 //4
 app.get('/fechas/getDiaTexto', (req, res) => {
-    const fecha = req.query.fechaNacimiento;
-    const abr = req.query.fechaNacimiento;
+    const fecha = req.query.fecha;
+    const abr = req.query.abr;
 })
 
 //5
 app.get('/fechas/getMesTexto', (req, res) => {
-    const fecha = req.query.fechaNacimiento;
-    const abr = req.query.fechaNacimiento;
+    const fecha = req.query.fecha;
+    const abr = req.query.abr;
+
+    
 })
 
 
