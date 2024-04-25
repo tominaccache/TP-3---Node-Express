@@ -211,7 +211,7 @@ app.get('/fechas/isDate', (req, res) => {
     return (DateTimeHelper.isDate(fecha) === true) ? res.status(200).send(`Perfecto! Tu fecha es valida :)`) : res.status(400).send(`Elija una fecha valida.`);
 })
 
-//2
+//2 TERMINADO
 app.get('/fechas/getEdadActual', (req, res) => {
     const fecha = req.query.fechaNacimiento;
     let miEdad = DateTimeHelper.getEdadActual(fecha);
@@ -220,7 +220,7 @@ app.get('/fechas/getEdadActual', (req, res) => {
     return res.status(200).send(`No decido si todavía no naciste, o todavía no cumplist el año. Either way, tenes cero años :$`);
 })
 
-//3
+//3 TERMINADO
 app.get('/fechas/getDiasHastaMiCumple', (req, res) => {
     const fecha = req.query.fechaNacimiento;
     let diasHastaMiCumple = DateTimeHelper.getDiasHastaMiCumple(fecha);
@@ -231,7 +231,7 @@ app.get('/fechas/getDiasHastaMiCumple', (req, res) => {
     return res.status(200).send(`Quedan ${diasHastaMiCumple + 1} días hasta tu cumple!`);
 })
 
-//4
+//4 TERMINADO
 app.get('/fechas/getDiaTexto', (req, res) => {
     const fecha = req.query.fecha;
     const abr = req.query.abr;
@@ -241,7 +241,7 @@ app.get('/fechas/getDiaTexto', (req, res) => {
     return res.status(200).send(`${JSON.stringify(miDia)}`);
 })
 
-//5
+//5 TERMINADO
 app.get('/fechas/getMesTexto', (req, res) => {
     const fecha = req.query.fecha;
     const abr = req.query.abr;
